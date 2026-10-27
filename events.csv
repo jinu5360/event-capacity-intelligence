@@ -1,0 +1,8 @@
+
+event_name,venue_capacity,registrations,actual_attendees,event_type
+Tech Summit A,2000,2350,1974,Technology
+Data Conference B,1200,1100,880,Data
+Innovation Forum C,3000,3200,2720,Technology
+Analytics Meetup D,500,450,360,Networking
+AI Expo E,2500,2800,2380,Technology
+Business Summit F,1800,1900,1520,Business
