@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import mysql.connector
 import os
@@ -56,6 +56,10 @@ def get_events():
 @app.route("/")
 def home():
     return "Event Capacity Intelligence API is running!"
+
+@app.route("/dashboard")
+def dashboard():
+    return send_from_directory(app.root_path, "index.html")
 
 
 if __name__ == "__main__":
