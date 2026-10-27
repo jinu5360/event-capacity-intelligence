@@ -424,9 +424,8 @@
             databaseStatus.textContent =
                 "Loading events from database...";
 
-            const response = await fetch(
-                "http://127.0.0.1:5000/api/events"
-            );
+            const response = await fetch("/api/events");
+
 
             if (!response.ok) {
                 throw new Error("API status: " + response.status);

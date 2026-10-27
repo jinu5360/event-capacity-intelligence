@@ -13,6 +13,9 @@ CORS(app)
 
 def get_database_connection():
     password = os.getenv("DB_PASSWORD")
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_user = os.getenv("DB_USER", "event_app")
+    
 
     if not password:
         raise RuntimeError(
@@ -20,8 +23,8 @@ def get_database_connection():
         )
 
     return mysql.connector.connect(
-        host="localhost",
-        user="event_app",
+        host=db_host,
+        user=db_user,
         password=password,
         database="event_capacity"
     )
