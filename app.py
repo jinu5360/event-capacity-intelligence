@@ -14,7 +14,7 @@ CORS(app)
 def get_database_connection():
     password = os.getenv("DB_PASSWORD")
     db_host = os.getenv("DB_HOST", "localhost")
-    db_user = os.getenv("DB_USER", "event_app")
+    db_user = os.getenv("DB_USERNAME") or os.getenv("DB_USER", "event_app")
     
 
     if not password:

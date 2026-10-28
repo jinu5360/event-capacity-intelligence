@@ -1,14 +1,8 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
-
-events = pd.read_csv('events.csv')
-print(events.head())
-
-
-import pandas as pd
-
-# 1. Load the event dataset
 events = pd.read_csv("events.csv")
+print(events.head())
 
 # 2. Calculate the show-up rate as a percentage
 events["show_up_rate"] = (
