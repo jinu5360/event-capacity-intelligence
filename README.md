@@ -1,6 +1,6 @@
 # Event Capacity Intelligence
 
-A data analytics project that helps event organizers assess attendance patterns, monitor venue capacity, and explore hypothetical registration scenarios through an interactive dashboard.
+A data analytics portfolio project that helps event organizers assess attendance patterns, monitor venue capacity, and explore hypothetical registration scenarios through an interactive dashboard.
 
 ## Overview
 
@@ -20,6 +20,7 @@ This project explores how data analytics can support those decisions.
 - Identify events that may present capacity risks.
 - Explore hypothetical attendance scenarios.
 - Present key metrics and visualizations in an interactive web dashboard.
+- Provide a Flask API to retrieve event data.
 
 ## Technology Stack
 
@@ -45,9 +46,11 @@ These results describe only the sample dataset. They are not validated forecasts
 
 ## Dashboard Preview
 
-<!-- Add a dashboard screenshot here after uploading it to the repository. -->
+The dashboard includes KPI cards, event selection, a capacity calculator, utilization visualizations, attendance comparisons, and rule-based business insights.
 
-*Screenshot coming soon.*
+[**View the Dashboard PDF**](Event-Capacity-Intelligence-Dashboard.pdf)
+
+> Note: The PDF is a static snapshot. The interactive dashboard currently runs locally; public deployment is pending.
 
 ## Project Structure
 
@@ -67,26 +70,55 @@ Local database credentials belong in `.env`. Never commit passwords, tokens, or 
 
 ## Running Locally
 
-1. Install Python and MySQL.
-2. Clone this repository and open its folder.
-3. Install the project dependencies:
+### Prerequisites
+
+- Python installed
+- MySQL Server installed and running
+- Git installed
+
+### Setup
+
+1. Clone this repository and open its folder in a terminal.
+2. Install the required Python packages:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Create the `event_capacity` database and configure the `events` table.
-5. Configure your local `.env` file with the required database settings, including `DB_PASSWORD`.
+3. Create a MySQL database named `event_capacity` and configure the `events` table to match the columns used by the application.
+4. Create a local `.env` file with your database settings:
+
+   ```text
+   DB_HOST=localhost
+   DB_USER=event_app
+   DB_PASSWORD=your_local_password
+   ```
+
+5. Make sure the MySQL user has permission to access the database and table.
 6. Start the Flask application:
 
    ```bash
    python app.py
    ```
 
-7. Open `http://127.0.0.1:5000/` to view the dashboard.
-8. Open `http://127.0.0.1:5000/api/events` to inspect the event data returned by the API.
+7. Open the interactive dashboard:
+
+   http://127.0.0.1:5000/dashboard
+
+8. To inspect the event data returned by the API, open:
+
+   http://127.0.0.1:5000/api/events
 
 Make sure your MySQL service is running and your database credentials and schema match the application's configuration.
+
+## Testing
+
+The project includes scripts for testing capacity calculations and checking MySQL connectivity:
+
+- `test_capacity.py`
+- `test_mysql.py`
+
+Run these scripts in your local Python environment after configuring the required dependencies and database access.
 
 ## Data Disclaimer
 
@@ -94,12 +126,15 @@ The dataset is illustrative and intended for portfolio demonstration. The metric
 
 ## Roadmap
 
-- [x] Connect event analytics to a database
-- [x] Build a Flask API and interactive dashboard
-- [x] Visualize capacity and attendance metrics
-- [ ] Add a dashboard screenshot and improve project documentation
-- [ ] Complete public deployment and verify the live application
-- [ ] Expand automated testing and error handling
+- [x] Create an illustrative event dataset.
+- [x] Build Python and Pandas analysis scripts.
+- [x] Connect the local application to MySQL.
+- [x] Build a Flask API and interactive dashboard.
+- [x] Publish the project source code to GitHub.
+- [x] Add a static dashboard PDF.
+- [ ] Resolve hosting deployment issues and verify the live application.
+- [ ] Expand automated testing and error handling.
+- [ ] Add a full-size dashboard screenshot to the README.
 
 ## Author
 
