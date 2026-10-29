@@ -1,407 +1,136 @@
+from pathlib import Path
 
-<!DOCTYPE html>
+html = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Capacity Intelligence</title>
-
-    <!-- Chart.js library for interactive charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            color: #1e293b;
-            margin: 0;
-            padding: 30px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        h1 {
-            color: #16325c;
-            margin-bottom: 8px;
-        }
-
-        h2 {
-            color: #16325c;
-        }
-
-        .subtitle {
-            color: #64748b;
-            margin-bottom: 28px;
-            line-height: 1.5;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 16px;
-            margin: 24px 0;
-        }
-
-        .card,
-        .panel {
-            background: white;
-            padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px #16325c12;
-        }
-
-        .card-label {
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        .card-value {
-            font-size: 30px;
-            font-weight: bold;
-            margin-top: 12px;
-            color: #16325c;
-            overflow-wrap: anywhere;
-        }
-
-        .panel {
-            margin-bottom: 20px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            font-size: 16px;
-            background: white;
-        }
-
-        input:focus,
-        select:focus {
-            outline: 2px solid #93c5fd;
-            border-color: #2563eb;
-        }
-
-        .result {
-            background: #eaf2ff;
-            padding: 18px;
-            border-radius: 10px;
-            margin-top: 18px;
-            overflow-wrap: anywhere;
-        }
-
-        .result h3 {
-            margin-top: 0;
-        }
-
-        .status {
-            color: #64748b;
-            font-size: 14px;
-            margin-top: 12px;
-            line-height: 1.5;
-        }
-
-        .risk {
-            font-weight: bold;
-            line-height: 1.6;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 380px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .chart-note {
-            color: #64748b;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .insight-list {
-            padding-left: 22px;
-            line-height: 1.7;
-        }
-
-        .insight-list li {
-            margin-bottom: 12px;
-        }
-
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f3f6fb; color: #1e293b; margin: 0; padding: 30px; }
+        .container { max-width: 1100px; margin: auto; }
+        h1, h2 { color: #16325c; }
+        h1 { margin-bottom: 8px; }
+        .subtitle { color: #64748b; margin-bottom: 28px; line-height: 1.5; }
+        .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 24px 0; }
+        .card, .panel { background: white; padding: 22px; border-radius: 12px; box-shadow: 0 3px 12px #16325c12; }
+        .card-label { color: #64748b; font-size: 14px; }
+        .card-value { font-size: 30px; font-weight: bold; margin-top: 12px; color: #16325c; overflow-wrap: anywhere; }
+        .panel { margin-bottom: 20px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 7px; font-size: 16px; background: white; }
+        input:focus, select:focus { outline: 2px solid #93c5fd; border-color: #2563eb; }
+        .result { background: #eaf2ff; padding: 18px; border-radius: 10px; margin-top: 18px; overflow-wrap: anywhere; }
+        .result h3 { margin-top: 0; }
+        .status { color: #64748b; font-size: 14px; margin-top: 12px; line-height: 1.5; }
+        .risk { font-weight: bold; line-height: 1.6; }
+        .chart-container { position: relative; height: 380px; width: 100%; margin-top: 20px; }
+        .chart-note { color: #64748b; font-size: 13px; line-height: 1.5; }
+        .insight-list { padding-left: 22px; line-height: 1.7; }
+        .insight-list li { margin-bottom: 12px; }
         @media (max-width: 700px) {
-            body {
-                padding: 15px;
-            }
-
-            .cards {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .card,
-            .panel {
-                padding: 18px;
-            }
-
-            .card-value {
-                font-size: 25px;
-            }
-
-            .chart-container {
-                height: 320px;
-            }
+            body { padding: 15px; }
+            .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .form-grid { grid-template-columns: 1fr; }
+            .card, .panel { padding: 18px; }
+            .card-value { font-size: 25px; }
+            .chart-container { height: 320px; }
         }
-
-        @media (max-width: 420px) {
-            .cards {
-                grid-template-columns: 1fr;
-            }
-        }
+        @media (max-width: 420px) { .cards { grid-template-columns: 1fr; } }
     </style>
 </head>
-
 <body>
 <div class="container">
-
     <h1>Event Capacity Intelligence</h1>
+    <p class="subtitle">Analyze event attendance, monitor venue capacity risk, and estimate a safer registration limit. All sample event records are synthetic.</p>
 
-    <p class="subtitle">
-        Analyze event attendance, monitor venue capacity risk,
-        and estimate a safer registration limit.
-        All sample event records are synthetic.
-    </p>
-
-    <!-- Selected-event summary cards -->
     <div class="cards">
-
-        <div class="card">
-            <div class="card-label">Venue Capacity</div>
-            <div class="card-value" id="capacityCard">—</div>
-        </div>
-
-        <div class="card">
-            <div class="card-label">Registrations</div>
-            <div class="card-value" id="registrationsCard">—</div>
-        </div>
-
-        <div class="card">
-            <div class="card-label">Expected Attendance</div>
-            <div class="card-value" id="attendanceCard">—</div>
-        </div>
-
+        <div class="card"><div class="card-label">Venue Capacity</div><div class="card-value" id="capacityCard">—</div></div>
+        <div class="card"><div class="card-label">Registrations</div><div class="card-value" id="registrationsCard">—</div></div>
+        <div class="card"><div class="card-label">Expected Attendance</div><div class="card-value" id="attendanceCard">—</div></div>
     </div>
 
-    <!-- Overall event KPIs -->
     <div class="panel">
         <h2>Overall Event Overview</h2>
-
         <div class="cards">
-
-            <div class="card">
-                <div class="card-label">Total Events</div>
-                <div class="card-value" id="totalEventsCard">—</div>
-            </div>
-
-            <div class="card">
-                <div class="card-label">High-Risk Events</div>
-                <div class="card-value" id="highRiskCard">—</div>
-            </div>
-
-            <div class="card">
-                <div class="card-label">Over Capacity</div>
-                <div class="card-value" id="overCapacityCard">—</div>
-            </div>
-
-            <div class="card">
-                <div class="card-label">Average Show-Up Rate</div>
-                <div class="card-value" id="averageShowUpCard">—</div>
-            </div>
-
+            <div class="card"><div class="card-label">Total Events</div><div class="card-value" id="totalEventsCard">—</div></div>
+            <div class="card"><div class="card-label">High-Risk Events</div><div class="card-value" id="highRiskCard">—</div></div>
+            <div class="card"><div class="card-label">Over Capacity</div><div class="card-value" id="overCapacityCard">—</div></div>
+            <div class="card"><div class="card-label">Average Show-Up Rate</div><div class="card-value" id="averageShowUpCard">—</div></div>
         </div>
     </div>
 
-    <!-- Capacity calculator -->
     <div class="panel">
-
         <h2>Capacity Calculator</h2>
-
         <div class="form-grid">
-
             <div>
                 <label for="eventSelect">Select an event</label>
-                <select id="eventSelect">
-                    <option value="">Loading events...</option>
-                </select>
-
-                <div class="status" id="databaseStatus">
-                    Connecting to database...
-                </div>
+                <select id="eventSelect"><option value="">Loading events...</option></select>
+                <div class="status" id="databaseStatus">Connecting to database...</div>
             </div>
-
-            <div>
-                <label for="capacity">Venue capacity</label>
-                <input
-                    type="number"
-                    id="capacity"
-                    min="1"
-                    step="1"
-                    value="2000"
-                >
-            </div>
-
-            <div>
-                <label for="registrations">Registrations</label>
-                <input
-                    type="number"
-                    id="registrations"
-                    min="0"
-                    step="1"
-                    value="2350"
-                >
-            </div>
-
-            <div>
-                <label for="showUp">Expected show-up rate (%)</label>
-                <input
-                    type="number"
-                    id="showUp"
-                    min="0.1"
-                    max="100"
-                    step="0.1"
-                    value="84"
-                >
-            </div>
-
-            <div>
-                <label for="buffer">Safety buffer (%)</label>
-                <input
-                    type="number"
-                    id="buffer"
-                    min="0"
-                    max="99.9"
-                    step="0.5"
-                    value="5"
-                >
-            </div>
-
+            <div><label for="capacity">Venue capacity</label><input type="number" id="capacity" min="1" step="1" value="2000"></div>
+            <div><label for="registrations">Registrations</label><input type="number" id="registrations" min="0" step="1" value="2350"></div>
+            <div><label for="showUp">Expected show-up rate (%)</label><input type="number" id="showUp" min="0.1" max="100" step="0.1" value="84"></div>
+            <div><label for="buffer">Safety buffer (%)</label><input type="number" id="buffer" min="0" max="99.9" step="0.5" value="5"></div>
         </div>
-
         <div class="result">
             <h3>Recommendation</h3>
-
-            <p>
-                Recommended registration cap:
-                <strong id="capResult">—</strong>
-            </p>
-
-            <p>
-                Safe planning target:
-                <strong id="targetResult">—</strong>
-            </p>
-
-            <p>
-                Estimated attendance:
-                <strong id="estimateResult">—</strong>
-            </p>
-
-            <p>
-                Difference from safe target:
-                <strong id="gapResult">—</strong>
-            </p>
-
-            <p id="risk" class="risk">
-                Waiting for event data...
-            </p>
+            <p>Recommended registration cap: <strong id="capResult">—</strong></p>
+            <p>Safe planning target: <strong id="targetResult">—</strong></p>
+            <p>Estimated attendance: <strong id="estimateResult">—</strong></p>
+            <p>Difference from safe target: <strong id="gapResult">—</strong></p>
+            <p id="risk" class="risk">Waiting for event data...</p>
         </div>
-
-        <p class="chart-note">
-            The recommendation is a planning estimate based on the
-            selected show-up rate and safety buffer. It is not a
-            guarantee of actual attendance or physical safety.
-        </p>
+        <p class="chart-note">The recommendation is a planning estimate based on the selected show-up rate and safety buffer. It is not a guarantee of actual attendance or physical safety.</p>
     </div>
 
-    <!-- Capacity utilization chart -->
     <div class="panel">
+        <h2>Attendance Scenario Comparison</h2>
+        <p class="subtitle">Compare estimated attendance under low, expected, and high show-up rate scenarios.</p>
+        <div class="cards">
+            <div class="card">
+                <div class="card-label" id="lowScenarioRate">Low scenario (80%)</div>
+                <div class="card-value" id="lowScenarioAttendance">—</div>
+                <p id="lowScenarioStatus" class="status">Waiting for calculation</p>
+            </div>
+            <div class="card">
+                <div class="card-label" id="expectedScenarioRate">Expected scenario</div>
+                <div class="card-value" id="expectedScenarioAttendance">—</div>
+                <p id="expectedScenarioStatus" class="status">Waiting for calculation</p>
+            </div>
+            <div class="card">
+                <div class="card-label" id="highScenarioRate">High scenario (90%)</div>
+                <div class="card-value" id="highScenarioAttendance">—</div>
+                <p id="highScenarioStatus" class="status">Waiting for calculation</p>
+            </div>
+        </div>
+        <p class="chart-note">Scenario rates are illustrative assumptions, not guaranteed forecasts. Attendance estimates are rounded to whole people.</p>
+    </div>
 
+    <div class="panel">
         <h2>Capacity Utilization by Event</h2>
-
-        <p class="subtitle">
-            Compare actual attendance with venue capacity across all events.
-            Hover over a bar to inspect utilization.
-        </p>
-
-        <div class="chart-container">
-            <canvas id="capacityChart"></canvas>
-        </div>
-
-        <p class="chart-note">
-            Capacity utilization = actual attendees ÷ venue capacity × 100.
-            Values above 100% mean recorded attendance exceeded recorded
-            venue capacity. Risk thresholds are illustrative.
-        </p>
+        <p class="subtitle">Compare actual attendance with venue capacity across all events. Hover over a bar to inspect utilization.</p>
+        <div class="chart-container"><canvas id="capacityChart"></canvas></div>
+        <p class="chart-note">Capacity utilization = actual attendees ÷ venue capacity × 100. Values above 100% mean recorded attendance exceeded recorded venue capacity. Risk thresholds are illustrative.</p>
     </div>
 
-    <!-- Actual attendance versus venue capacity chart -->
     <div class="panel">
-
         <h2>Actual Attendance vs Venue Capacity</h2>
-
-        <div class="chart-container">
-            <canvas id="attendanceChart"></canvas>
-        </div>
-
-        <p class="chart-note">
-            Actual attendance is compared with each venue's recorded
-            capacity. These sample figures are synthetic.
-        </p>
+        <div class="chart-container"><canvas id="attendanceChart"></canvas></div>
+        <p class="chart-note">Actual attendance is compared with each venue's recorded capacity. These sample figures are synthetic.</p>
     </div>
 
-    <!-- Automatically generated business insights -->
     <div class="panel">
-
         <h2>Business Insights</h2>
-
-        <div id="businessInsights" aria-live="polite">
-            Analyzing event data...
-        </div>
-
-        <p class="chart-note">
-            Insights are generated using transparent, rule-based calculations,
-            not a generative AI model.
-        </p>
+        <div id="businessInsights" aria-live="polite">Analyzing event data...</div>
+        <p class="chart-note">Insights are generated using transparent, rule-based calculations, not a generative AI model.</p>
     </div>
-
 </div>
 
 <script>
-    // --------------------------------------------------
-    // 1. Connect JavaScript to the HTML elements
-    // --------------------------------------------------
-
     const capacityInput = document.getElementById("capacity");
     const registrationsInput = document.getElementById("registrations");
     const showUpInput = document.getElementById("showUp");
@@ -409,89 +138,47 @@
     const eventSelect = document.getElementById("eventSelect");
     const databaseStatus = document.getElementById("databaseStatus");
 
-    // These variables hold the database records and chart instances.
     let events = [];
     let capacityChart = null;
     let attendanceChart = null;
 
-
-    // --------------------------------------------------
-    // 2. Load event records from the Flask API
-    // --------------------------------------------------
-
     async function loadEventsFromDatabase() {
         try {
-            databaseStatus.textContent =
-                "Loading events from database...";
-
+            databaseStatus.textContent = "Loading events from database...";
             const response = await fetch("/api/events");
-
-
-            if (!response.ok) {
-                throw new Error("API status: " + response.status);
-            }
+            if (!response.ok) throw new Error("API status: " + response.status);
 
             const data = await response.json();
-
             if (!Array.isArray(data) || data.length === 0) {
                 throw new Error("No event records were returned.");
             }
-
             events = data;
 
-            // Calculate the overall KPIs.
             const totalEvents = events.length;
-
             const highRiskEvents = events.filter(function(event) {
                 const capacity = Number(event.venue_capacity);
                 const attendees = Number(event.actual_attendees);
-
-                if (capacity <= 0) {
-                    return false;
-                }
-
-                const utilization = attendees / capacity * 100;
-                return utilization >= 95;
+                return capacity > 0 && attendees / capacity * 100 >= 95;
             }).length;
-
             const overCapacityEvents = events.filter(function(event) {
-                return Number(event.actual_attendees) >
-                    Number(event.venue_capacity);
+                return Number(event.actual_attendees) > Number(event.venue_capacity);
             }).length;
 
-            // Average the show-up rate of events with registrations.
             const eventsWithRegistrations = events.filter(function(event) {
                 return Number(event.registrations) > 0;
             });
+            const averageShowUpRate = eventsWithRegistrations.length > 0
+                ? eventsWithRegistrations.reduce(function(total, event) {
+                    return total + Number(event.actual_attendees) / Number(event.registrations) * 100;
+                }, 0) / eventsWithRegistrations.length
+                : 0;
 
-            const averageShowUpRate =
-                eventsWithRegistrations.length > 0
-                    ? eventsWithRegistrations.reduce(
-                        function(total, event) {
-                            return total +
-                                Number(event.actual_attendees) /
-                                Number(event.registrations) * 100;
-                        },
-                        0
-                    ) / eventsWithRegistrations.length
-                    : 0;
+            document.getElementById("totalEventsCard").textContent = totalEvents.toLocaleString();
+            document.getElementById("highRiskCard").textContent = highRiskEvents.toLocaleString();
+            document.getElementById("overCapacityCard").textContent = overCapacityEvents.toLocaleString();
+            document.getElementById("averageShowUpCard").textContent = averageShowUpRate.toFixed(1) + "%";
 
-            // Display the overall KPIs.
-            document.getElementById("totalEventsCard").textContent =
-                totalEvents.toLocaleString();
-
-            document.getElementById("highRiskCard").textContent =
-                highRiskEvents.toLocaleString();
-
-            document.getElementById("overCapacityCard").textContent =
-                overCapacityEvents.toLocaleString();
-
-            document.getElementById("averageShowUpCard").textContent =
-                averageShowUpRate.toFixed(1) + "%";
-
-            // Fill the event dropdown.
             eventSelect.innerHTML = "";
-
             events.forEach(function(event, index) {
                 const option = document.createElement("option");
                 option.value = String(index);
@@ -499,383 +186,279 @@
                 eventSelect.appendChild(option);
             });
 
-            databaseStatus.textContent =
-                "Connected successfully — " +
-                events.length +
-                " events loaded from MySQL.";
-
-            // Draw the charts and calculate business insights.
+            databaseStatus.textContent = "Connected successfully — " + events.length + " events loaded from MySQL.";
             createCapacityChart();
             createAttendanceChart();
             createBusinessInsights();
-
-            // Select the first event and populate the calculator.
             eventSelect.value = "0";
             loadSelectedEvent(0);
-
         } catch (error) {
             console.error("Could not load event data:", error);
-
-            eventSelect.innerHTML =
-                '<option value="">Could not load events</option>';
-
-            databaseStatus.textContent =
-                "Could not connect. Check that Flask is running at " +
-                "127.0.0.1:5000 and inspect the browser Console.";
-
-            document.getElementById("businessInsights").textContent =
-                "Business insights could not be generated because event data failed to load.";
+            eventSelect.innerHTML = '<option value="">Could not load events</option>';
+            databaseStatus.textContent = "Could not connect. Check that Flask is running at 127.0.0.1:5000 and inspect the browser Console.";
+            document.getElementById("businessInsights").textContent = "Business insights could not be generated because event data failed to load.";
         }
     }
 
-
-    // --------------------------------------------------
-    // 3. Create the capacity utilization chart
-    // --------------------------------------------------
-
     function createCapacityChart() {
-        const labels = events.map(function(event) {
-            return event.event_name;
-        });
-
+        const labels = events.map(event => event.event_name);
         const utilization = events.map(function(event) {
             const capacity = Number(event.venue_capacity);
-            const attendees = Number(event.actual_attendees);
-
-            if (capacity <= 0) {
-                return 0;
-            }
-
-            return attendees / capacity * 100;
+            return capacity > 0 ? Number(event.actual_attendees) / capacity * 100 : 0;
         });
 
-        const canvas = document.getElementById("capacityChart");
-
-        // Destroy the old chart before drawing a replacement.
-        if (capacityChart) {
-            capacityChart.destroy();
-        }
-
-        capacityChart = new Chart(canvas, {
+        if (capacityChart) capacityChart.destroy();
+        capacityChart = new Chart(document.getElementById("capacityChart"), {
             type: "bar",
-
             data: {
                 labels: labels,
-
                 datasets: [{
                     label: "Capacity Utilization",
                     data: utilization,
-
                     backgroundColor: utilization.map(function(value) {
-                        if (value >= 100) {
-                            return "#dc2626";
-                        }
-
-                        if (value >= 95) {
-                            return "#f59e0b";
-                        }
-
+                        if (value >= 100) return "#dc2626";
+                        if (value >= 95) return "#f59e0b";
                         return "#3b82f6";
                     }),
-
                     borderRadius: 6
                 }]
             },
-
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: "y",
-
                 plugins: {
-                    legend: {
-                        display: false
-                    },
-
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return "Utilization: " +
-                                    context.parsed.x.toFixed(1) + "%";
+                                return "Utilization: " + context.parsed.x.toFixed(1) + "%";
                             }
                         }
                     }
                 },
-
                 scales: {
                     x: {
                         beginAtZero: true,
-
-                        // Leave room for bars above 100%.
-                        suggestedMax: Math.max(
-                            110,
-                            Math.ceil(Math.max(...utilization, 0) / 10) * 10
-                        ),
-
-                        title: {
-                            display: true,
-                            text: "Capacity utilization (%)"
-                        },
-
-                        ticks: {
-                            callback: function(value) {
-                                return value + "%";
-                            }
-                        }
+                        suggestedMax: Math.max(110, Math.ceil(Math.max(...utilization, 0) / 10) * 10),
+                        title: { display: true, text: "Capacity utilization (%)" },
+                        ticks: { callback: value => value + "%" }
                     },
-
-                    y: {
-                        ticks: {
-                            autoSkip: false
-                        }
-                    }
+                    y: { ticks: { autoSkip: false } }
                 }
             }
         });
     }
-
-
-    // --------------------------------------------------
-    // 4. Create the attendance versus capacity chart
-    // --------------------------------------------------
 
     function createAttendanceChart() {
-        const labels = events.map(function(event) {
-            return event.event_name;
-        });
+        const labels = events.map(event => event.event_name);
+        const attendees = events.map(event => Number(event.actual_attendees));
+        const capacities = events.map(event => Number(event.venue_capacity));
+        if (attendanceChart) attendanceChart.destroy();
 
-        const attendees = events.map(function(event) {
-            return Number(event.actual_attendees);
-        });
-
-        const capacities = events.map(function(event) {
-            return Number(event.venue_capacity);
-        });
-
-        if (attendanceChart) {
-            attendanceChart.destroy();
-        }
-
-        attendanceChart = new Chart(
-            document.getElementById("attendanceChart"),
-            {
-                type: "bar",
-
-                data: {
-                    labels: labels,
-
-                    datasets: [
-                        {
-                            label: "Actual Attendees",
-                            data: attendees,
-                            backgroundColor: "#3b82f6"
-                        },
-                        {
-                            label: "Venue Capacity",
-                            data: capacities,
-                            backgroundColor: "#cbd5e1"
-                        }
-                    ]
-                },
-
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-
-                            title: {
-                                display: true,
-                                text: "Number of people"
-                            }
-                        }
-                    }
+        attendanceChart = new Chart(document.getElementById("attendanceChart"), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: "Actual Attendees", data: attendees, backgroundColor: "#3b82f6" },
+                    { label: "Venue Capacity", data: capacities, backgroundColor: "#cbd5e1" }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: "Number of people" } }
                 }
             }
-        );
+        });
     }
 
-
-    // --------------------------------------------------
-    // 5. Generate rule-based business insights
-    // --------------------------------------------------
-
     function createBusinessInsights() {
-        const insightsContainer =
-            document.getElementById("businessInsights");
-
+        const container = document.getElementById("businessInsights");
         if (events.length === 0) {
-            insightsContainer.textContent =
-                "No event data available.";
+            container.textContent = "No event data available.";
             return;
         }
 
-        const eventStats = events.map(function(event) {
+        const stats = events.map(function(event) {
             const capacity = Number(event.venue_capacity);
             const registrations = Number(event.registrations);
             const attendees = Number(event.actual_attendees);
-
             return {
                 name: event.event_name,
-
-                utilization: capacity > 0
-                    ? attendees / capacity * 100
-                    : 0,
-
-                showUpRate: registrations > 0
-                    ? attendees / registrations * 100
-                    : 0,
-
+                utilization: capacity > 0 ? attendees / capacity * 100 : 0,
+                showUpRate: registrations > 0 ? attendees / registrations * 100 : 0,
                 remainingCapacity: capacity - attendees
             };
         });
 
-        // Find the event with the highest utilization.
-        const highestUtilization = eventStats.reduce(
-            function(highest, event) {
-                return event.utilization > highest.utilization
-                    ? event
-                    : highest;
-            }
-        );
+        const highest = stats.reduce((best, event) => event.utilization > best.utilization ? event : best);
+        const highRisk = stats.filter(event => event.utilization >= 95);
+        const overCapacity = stats.filter(event => event.utilization > 100);
 
-        // Events at 95% utilization or above are flagged as high risk.
-        const highRiskEvents = eventStats.filter(function(event) {
-            return event.utilization >= 95;
-        });
-
-        // Find events whose recorded attendance exceeded capacity.
-        const overCapacityEvents = eventStats.filter(function(event) {
-            return event.utilization > 100;
-        });
-
-        // Build the messages using the calculated results.
         const messages = [
-            "Highest capacity utilization: " +
-                highestUtilization.name + " (" +
-                highestUtilization.utilization.toFixed(1) + "%).",
-
-            highRiskEvents.length +
-                " of " + events.length +
-                " events have at least 95% capacity utilization.",
-
-            overCapacityEvents.length === 0
+            "Highest capacity utilization: " + highest.name + " (" + highest.utilization.toFixed(1) + "%).",
+            highRisk.length + " of " + events.length + " events have at least 95% capacity utilization.",
+            overCapacity.length === 0
                 ? "No sample events currently exceed their recorded venue capacity."
-                : overCapacityEvents.length +
-                    " event(s) exceed their recorded venue capacity.",
-
-            highestUtilization.remainingCapacity >= 0
-                ? highestUtilization.name + " has " +
-                    highestUtilization.remainingCapacity.toLocaleString() +
-                    " spaces remaining based on recorded attendance."
-                : highestUtilization.name + " exceeds its recorded venue capacity by " +
-                    Math.abs(highestUtilization.remainingCapacity).toLocaleString() +
-                    " people."
+                : overCapacity.length + " event(s) exceed their recorded venue capacity.",
+            highest.remainingCapacity >= 0
+                ? highest.name + " has " + highest.remainingCapacity.toLocaleString() + " spaces remaining based on recorded attendance."
+                : highest.name + " exceeds its recorded venue capacity by " + Math.abs(highest.remainingCapacity).toLocaleString() + " people."
         ];
 
-        // Clear the loading message.
-        insightsContainer.innerHTML = "";
-
-        // Create a list safely using textContent.
+        container.innerHTML = "";
         const list = document.createElement("ul");
         list.className = "insight-list";
-
         messages.forEach(function(message) {
             const item = document.createElement("li");
             item.textContent = message;
             list.appendChild(item);
         });
-
-        insightsContainer.appendChild(list);
+        container.appendChild(list);
     }
-
-
-    // --------------------------------------------------
-    // 6. Load a selected event into the calculator
-    // --------------------------------------------------
 
     function loadSelectedEvent(index) {
         const event = events[index];
-
-        if (!event) {
-            return;
-        }
+        if (!event) return;
 
         capacityInput.value = event.venue_capacity;
         registrationsInput.value = event.registrations;
 
         const registrations = Number(event.registrations);
         const attendees = Number(event.actual_attendees);
-
-        const showUpRate = registrations > 0
-            ? attendees / registrations * 100
-            : 0;
-
-        // Use the historical rate as the initial estimate.
-        // The user can change it afterwards.
-        showUpInput.value = showUpRate > 0
-            ? showUpRate.toFixed(1)
-            : "";
-
+        const showUpRate = registrations > 0 ? attendees / registrations * 100 : 0;
+        showUpInput.value = showUpRate > 0 ? showUpRate.toFixed(1) : "";
         updateDashboard();
     }
 
+    async function updateDashboard() {
+    const capacity = Number(capacityInput.value);
+    const registrations = Number(registrationsInput.value);
+    const showUpPercent = Number(showUpInput.value);
+    const bufferPercent = Number(bufferInput.value);
+    const risk = document.getElementById("risk");
 
-    // --------------------------------------------------
-    // 7. Calculate the registration cap and update cards
-    // --------------------------------------------------
+    const valuesAreValid =
+        capacityInput.value.trim() !== "" &&
+        registrationsInput.value.trim() !== "" &&
+        showUpInput.value.trim() !== "" &&
+        bufferInput.value.trim() !== "" &&
+        Number.isFinite(capacity) &&
+        Number.isFinite(registrations) &&
+        Number.isFinite(showUpPercent) &&
+        Number.isFinite(bufferPercent) &&
+        capacity > 0 &&
+        registrations >= 0 &&
+        showUpPercent > 0 &&
+        showUpPercent <= 100 &&
+        bufferPercent >= 0 &&
+        bufferPercent < 100;
 
-    function updateDashboard() {
-        const capacity = Number(capacityInput.value);
-        const registrations = Number(registrationsInput.value);
-        const showUpPercent = Number(showUpInput.value);
-        const bufferPercent = Number(bufferInput.value);
+    if (!valuesAreValid) {
+        risk.textContent =
+            "Enter valid values: capacity must be positive, registrations cannot be negative, show-up rate must be above 0% and at most 100%, and buffer must be between 0% and 100%.";
+        risk.style.color = "#dc2626";
 
-        const risk = document.getElementById("risk");
+        ["capResult", "targetResult", "estimateResult", "gapResult"].forEach(function(id) {
+            document.getElementById(id).textContent = "—";
+        });
 
-        const valuesAreValid =
-            capacityInput.value.trim() !== "" &&
-            registrationsInput.value.trim() !== "" &&
-            showUpInput.value.trim() !== "" &&
-            bufferInput.value.trim() !== "" &&
-            Number.isFinite(capacity) &&
-            Number.isFinite(registrations) &&
-            Number.isFinite(showUpPercent) &&
-            Number.isFinite(bufferPercent) &&
-            capacity > 0 &&
-            registrations >= 0 &&
-            showUpPercent > 0 &&
-            showUpPercent <= 100 &&
-            bufferPercent >= 0 &&
-            bufferPercent < 100;
+        ["lowScenarioAttendance", "expectedScenarioAttendance", "highScenarioAttendance"].forEach(function(id) {
+            document.getElementById(id).textContent = "—";
+        });
 
-        if (!valuesAreValid) {
-            risk.textContent =
-                "Enter valid values: capacity must be positive, " +
-                "registrations cannot be negative, show-up rate must be " +
-                "above 0% and at most 100%, and buffer must be between 0% and 100%.";
+        ["lowScenarioStatus", "expectedScenarioStatus", "highScenarioStatus"].forEach(function(id) {
+            document.getElementById(id).textContent = "Waiting for valid values";
+        });
 
-            risk.style.color = "#dc2626";
+        return;
+    }
 
-            document.getElementById("capResult").textContent = "—";
-            document.getElementById("targetResult").textContent = "—";
-            document.getElementById("estimateResult").textContent = "—";
-            document.getElementById("gapResult").textContent = "—";
+    try {
+        // Send the calculator inputs to Flask
+        const response = await fetch("/api/calculate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                venue_capacity: capacity,
+                registrations: registrations,
+                show_up_rate: showUpPercent,
+                safety_buffer: bufferPercent
+            })
+        });
 
-            return;
+        if (!response.ok) {
+            throw new Error("API request failed with status " + response.status);
         }
 
-        const showUp = showUpPercent / 100;
-        const buffer = bufferPercent / 100;
+        // Receive the calculation from Flask
+        const result = await response.json();
 
-        const expectedAttendance = registrations * showUp;
-        const safeTarget = capacity * (1 - buffer);
-        const recommendedCap = Math.floor(safeTarget / showUp);
-        const difference = expectedAttendance - safeTarget;
+        const expectedAttendance = Number(result.expected_attendance);
+        const safeTarget = Number(result.safe_target);
+        const recommendedCap = Number(result.recommended_cap);
+        const difference = Number(result.difference);
 
-        // Update the selected-event summary cards.
+        // Compare a scenario against the safer target first,
+        // then physical venue capacity.
+        function scenarioStatus(attendance) {
+            if (attendance > capacity) return "Exceeds venue capacity";
+            if (attendance > safeTarget) return "Above safe target, within capacity";
+            return "Within safe planning target";
+        }
+
+        // Scenario calculations remain on the frontend
+        const lowRate = Math.max(0.1, showUpPercent - 5);
+        const highRate = Math.min(100, showUpPercent + 5);
+
+        const lowAttendance = Math.round(
+            registrations * lowRate / 100
+        );
+
+        const expectedScenarioAttendance = Math.round(
+            registrations * showUpPercent / 100
+        );
+
+        const highAttendance = Math.round(
+            registrations * highRate / 100
+        );
+
+        // Scenario labels
+        document.getElementById("lowScenarioRate").textContent =
+            "Low scenario (" + lowRate.toFixed(1) + "%)";
+
+        document.getElementById("expectedScenarioRate").textContent =
+            "Expected scenario (" + showUpPercent.toFixed(1) + "%)";
+
+        document.getElementById("highScenarioRate").textContent =
+            "High scenario (" + highRate.toFixed(1) + "%)";
+
+        // Scenario attendance
+        document.getElementById("lowScenarioAttendance").textContent =
+            lowAttendance.toLocaleString();
+
+        document.getElementById("expectedScenarioAttendance").textContent =
+            expectedScenarioAttendance.toLocaleString();
+
+        document.getElementById("highScenarioAttendance").textContent =
+            highAttendance.toLocaleString();
+
+        // Scenario status
+        document.getElementById("lowScenarioStatus").textContent =
+            scenarioStatus(lowAttendance);
+
+        document.getElementById("expectedScenarioStatus").textContent =
+            scenarioStatus(expectedScenarioAttendance);
+
+        document.getElementById("highScenarioStatus").textContent =
+            scenarioStatus(highAttendance);
+
+        // KPI cards
         document.getElementById("capacityCard").textContent =
             capacity.toLocaleString();
 
@@ -885,9 +468,9 @@
         document.getElementById("attendanceCard").textContent =
             Math.round(expectedAttendance).toLocaleString();
 
-        // Update the calculator results.
+        // Main recommendation results
         document.getElementById("capResult").textContent =
-            recommendedCap.toLocaleString();
+            Math.floor(recommendedCap).toLocaleString();
 
         document.getElementById("targetResult").textContent =
             Math.floor(safeTarget).toLocaleString();
@@ -905,51 +488,43 @@
                         : " at target"
             );
 
-        // Display a planning warning based on estimated attendance.
+        // Risk message
         if (expectedAttendance > capacity) {
             risk.textContent =
                 "HIGH RISK: Expected attendance exceeds venue capacity.";
             risk.style.color = "#dc2626";
-
         } else if (expectedAttendance > safeTarget) {
             risk.textContent =
                 "WARNING: Expected attendance exceeds the safe planning target.";
             risk.style.color = "#b45309";
-
         } else {
             risk.textContent =
                 "WITHIN TARGET: Expected attendance is within the safe planning target.";
             risk.style.color = "#15803d";
         }
+
+    } catch (error) {
+        console.error("Calculation API error:", error);
+
+        risk.textContent =
+            "Unable to calculate results. Make sure the Flask server is running.";
+        risk.style.color = "#dc2626";
     }
-
-
-    // --------------------------------------------------
-    // 8. Connect user interactions
-    // --------------------------------------------------
-
-    // Changing the selected event loads its records.
+}
     eventSelect.addEventListener("change", function() {
         loadSelectedEvent(Number(eventSelect.value));
     });
 
-    // Editing an input recalculates the recommendation.
-    [
-        capacityInput,
-        registrationsInput,
-        showUpInput,
-        bufferInput
-    ].forEach(function(input) {
+    [capacityInput, registrationsInput, showUpInput, bufferInput].forEach(function(input) {
         input.addEventListener("input", updateDashboard);
     });
 
-
-    // --------------------------------------------------
-    // 9. Start the application
-    // --------------------------------------------------
-
     loadEventsFromDatabase();
 </script>
-
 </body>
 </html>
+'''
+
+path = Path("/mnt/data/index.html")
+path.write_text(html, encoding="utf-8")
+print(f"Created updated full HTML file: {path}")
