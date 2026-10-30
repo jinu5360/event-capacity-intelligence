@@ -225,3 +225,18 @@ It combines data processing, database management, backend development, calculati
 **GitHub Repository:**
 
 https://github.com/jinu5360/event-capacity-intelligence
+
+## 15. Business Insight Example
+
+For example, consider an event with:
+
+- Venue capacity: 2,000
+- Registrations: 2,500
+- Expected show-up rate: 90%
+- Safety buffer: 5%
+
+The estimated attendance is 2,250, while the safe planning target is 1,900.
+
+This indicates a high capacity risk. The organizer should consider limiting registrations to the recommended cap of 2,111.
+
+This example demonstrates how the dashboard can turn event data into practical registration decisions.
