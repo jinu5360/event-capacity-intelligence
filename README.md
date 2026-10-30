@@ -4,7 +4,7 @@ A data-driven event capacity planning dashboard that helps event organizers esti
 
 ## Dashboard Preview
 
-The project includes a PDF dashboard demonstrating the event capacity analysis, registration planning, risk classification, and attendance scenarios.
+The project includes a PDF dashboard demonstrating event capacity analysis, registration planning, risk classification, and attendance scenarios.
 
 **[View the Event Capacity Intelligence Dashboard PDF](Event-Capacity-Intelligence-Dashboard.pdf)**
 
@@ -39,8 +39,6 @@ However, not every registered attendee will attend the event. This creates a pla
 
 ### Event Overview
 
-The dashboard provides:
-
 - Total number of events
 - High-risk events
 - Events exceeding venue capacity
@@ -67,13 +65,11 @@ The calculator returns:
 
 The dashboard compares three illustrative scenarios:
 
-- **Low attendance:** show-up rate reduced by 5 percentage points
-- **Expected attendance:** selected show-up rate
-- **High attendance:** show-up rate increased by 5 percentage points
+- **Low attendance:** show-up rate reduced by 5 percentage points.
+- **Expected attendance:** selected show-up rate.
+- **High attendance:** show-up rate increased by 5 percentage points.
 
 ### Data Visualizations
-
-The dashboard includes:
 
 - Capacity utilization by event
 - Actual attendance versus venue capacity
@@ -120,15 +116,15 @@ event-capacity-intelligence/
 └── Event-Capacity-Intelligence-Dashboard.pdf
 ```
 
-### Key files
+### Key Files
 
-- `app.py` — Flask application and API endpoints
-- `capacity.py` — Capacity planning and risk calculation logic
-- `index.html` — Interactive dashboard interface
-- `events.csv` — Synthetic event data
-- `test_capacity.py` — Calculation test suite
-- `requirements.txt` — Python dependencies
-- `Event-Capacity-Intelligence-Dashboard.pdf` — Dashboard/report artifact
+- `app.py` — Flask application and API endpoints.
+- `capacity.py` — Capacity planning and risk calculation logic.
+- `index.html` — Interactive dashboard interface.
+- `events.csv` — Synthetic event data.
+- `test_capacity.py` — Calculation test suite.
+- `requirements.txt` — Python dependencies.
+- `Event-Capacity-Intelligence-Dashboard.pdf` — Dashboard report.
 
 ---
 
@@ -147,3 +143,141 @@ event-capacity-intelligence/
 ```text
 MySQL Event Data
        ↓
+   Flask API
+       ↓
+Interactive Dashboard
+       ↓
+Capacity Calculator
+       ↓
+Planning Calculations
+       ↓
+Risk Classification
+       ↓
+Registration Recommendation
+```
+
+---
+
+## 7. Core Calculation Logic
+
+### Expected Attendance
+
+```text
+Registrations × Expected Show-up Rate
+```
+
+### Safe Planning Target
+
+```text
+Venue Capacity × (1 − Safety Buffer)
+```
+
+### Recommended Registration Cap
+
+```text
+Safe Planning Target ÷ Expected Show-up Rate
+```
+
+The recommended registration cap is rounded down to a whole person.
+
+These calculations are planning estimates, not guarantees of actual attendance or physical safety.
+
+---
+
+## 8. Risk Classification
+
+| Condition | Classification |
+|---|---|
+| Expected attendance is within the safe target | Within Target |
+| Expected attendance exceeds the safe target but remains within venue capacity | Warning |
+| Expected attendance exceeds venue capacity | High Risk |
+
+---
+
+## 9. Testing and Validation
+
+The project includes calculation tests and manual dashboard testing.
+
+Five manual scenarios were successfully checked:
+
+| Test | Scenario | Result |
+|---|---|---|
+| 1 | Normal attendance | Passed |
+| 2 | Above safe target, below capacity | Passed |
+| 3 | Above venue capacity | Passed |
+| 4 | Zero registrations | Passed |
+| 5 | Invalid show-up rate | Passed |
+
+The separate calculation test suite also passed **12 test cases**.
+
+---
+
+## 10. Sample Data
+
+The project uses synthetic event records for demonstration and testing.
+
+No real attendee personal information is required for the sample dashboard.
+
+---
+
+## 11. Running the Project Locally
+
+### Prerequisites
+
+- Python
+- MySQL Server
+- A web browser
+
+### Install Python Dependencies
+
+```bash
+pip install flask flask-cors mysql-connector-python python-dotenv
+```
+
+### Configure Database Credentials
+
+Create a `.env` file in the project folder:
+
+```env
+DB_HOST=localhost
+DB_USERNAME=event_app
+DB_PASSWORD=your_database_password
+```
+
+Use your actual local database password.
+
+**Do not commit the `.env` file to GitHub.**
+
+### Start the Application
+
+```bash
+python app.py
+```
+
+Open the dashboard:
+
+```text
+http://127.0.0.1:5000/dashboard
+```
+
+---
+
+## 12. Future Improvements
+
+- Event creation and editing
+- Attendee registration management
+- Automatic registration caps
+- Ticket and check-in tracking
+- Live capacity monitoring
+- More advanced attendance forecasting
+- Improved reporting and export functionality
+
+---
+
+## 13. Project Purpose
+
+This project demonstrates how database management, backend development, data analysis, business rules, and interactive visualizations can be combined to address a practical event operations problem.
+
+**Project:** Event Capacity Intelligence  
+**Developer:** Jinesh Jain  
+**GitHub:** https://github.com/jinu5360/event-capacity-intelligence
