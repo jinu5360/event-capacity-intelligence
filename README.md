@@ -288,6 +288,11 @@ This indicates a high capacity risk. The organizer should consider limiting regi
 This example demonstrates how the dashboard can turn event data into practical registration decisions.
 
 ---
+---
 
 **GitHub Repository:**  
-https://github.com/jinu5360/event
+[Event Capacity Intelligence](https://github.com/jinu5360/event-capacity-intelligence)
+
+## Dashboard Preview
+
+[View Dashboard PDF](Event-Capacity-Intelligence-Dashboard.pdf)
