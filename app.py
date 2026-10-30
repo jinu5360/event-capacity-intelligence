@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from capacity import calculate_capacity
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = Flask(__name__)
 CORS(app)

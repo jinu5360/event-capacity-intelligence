@@ -2,6 +2,8 @@
 
 A data analytics dashboard that helps event organizers make better registration and venue-capacity decisions using attendance estimates, capacity calculations, and risk analysis.
 
+All sample event records are synthetic.
+
 ## 1. Business Problem
 
 Events can receive more registrations than their venues can accommodate. However, not every registered participant attends the event.
@@ -110,6 +112,7 @@ The capacity calculation logic was tested using different scenarios.
 - Tested zero registrations.
 - Tested invalid show-up rates.
 - Tested the Flask calculation API.
+- Tested a fresh installation using a separate GitHub download.
 
 ## 10. Sample Data
 
@@ -133,9 +136,20 @@ Install the following:
 
 - Python
 - MySQL Server
+- MySQL Workbench (recommended)
 - A web browser
 
-### Step 1: Install Dependencies
+### Step 1: Download the Project
+
+Clone the repository:
+
+```bash
+git clone https://github.com/jinu5360/event-capacity-intelligence.git
+```
+
+Open the downloaded project folder in VS Code.
+
+### Step 2: Install Dependencies
 
 Open a terminal in the project folder and run:
 
@@ -143,16 +157,16 @@ Open a terminal in the project folder and run:
 pip install -r requirements.txt
 ```
 
-### Step 2: Create the Database
+### Step 3: Create the Database
 
-Open MySQL and run:
+Open MySQL Workbench or the MySQL command-line client and run:
 
 ```sql
 CREATE DATABASE event_capacity;
 USE event_capacity;
 ```
 
-### Step 3: Create the Events Table
+### Step 4: Create the Events Table
 
 Run the following SQL:
 
@@ -167,27 +181,59 @@ CREATE TABLE events (
 );
 ```
 
-### Step 4: Import the Sample Data
+### Step 5: Import the Sample Data
 
 Import the provided `events.csv` file into the `events` table using MySQL Workbench's Table Data Import Wizard.
 
-Make sure the CSV columns match the table columns, excluding the auto-generated `event_id` column.
+Make sure the CSV columns match the table columns. Do not import `event_id` if MySQL is generating it automatically.
 
-### Step 5: Configure Database Credentials
+### Step 6: Create a MySQL Application User
 
-Create a `.env` file in the project folder:
+For security, the application uses a separate MySQL user instead of the MySQL root account.
+
+Run the following SQL:
+
+```sql
+CREATE USER 'event_app'@'localhost'
+IDENTIFIED BY 'choose_your_password';
+
+GRANT SELECT, INSERT, UPDATE, DELETE
+ON event_capacity.*
+TO 'event_app'@'localhost';
+```
+
+Replace `choose_your_password` with a password of your choice.
+
+If the `event_app` user already exists, update its password using:
+
+```sql
+ALTER USER 'event_app'@'localhost'
+IDENTIFIED BY 'choose_your_password';
+```
+
+Then run the `GRANT` statement above.
+
+### Step 7: Configure Environment Variables
+
+Create a file named `.env` in the project folder, at the same level as `app.py`.
+
+Add:
 
 ```env
 DB_HOST=localhost
 DB_USERNAME=event_app
-DB_PASSWORD=your_database_password
+DB_PASSWORD=choose_your_password
 ```
 
-Use your actual local database password.
+Use the same password you assigned to the `event_app` MySQL user.
 
-**Do not commit the `.env` file to GitHub.**
+The application loads these settings using `python-dotenv`.
 
-### Step 6: Start the Application
+The application uses `load_dotenv(override=True)` so values from the project's `.env` file take precedence over existing environment variables.
+
+**Important:** Never upload your `.env` file or database passwords to GitHub.
+
+### Step 8: Start the Application
 
 Run:
 
@@ -195,11 +241,15 @@ Run:
 python app.py
 ```
 
-### Step 7: Open the Dashboard
+Keep the terminal open while using the application.
+
+### Step 9: Open the Dashboard
 
 Open your browser and visit:
 
 http://127.0.0.1:5000/dashboard
+
+The dashboard should retrieve the six sample events from MySQL.
 
 ## 12. API Endpoints
 
@@ -222,13 +272,9 @@ This project demonstrates how data analytics can support practical business deci
 
 It combines data processing, database management, backend development, calculations, and visualization to address a real-world event-planning problem.
 
-**GitHub Repository:**
-
-https://github.com/jinu5360/event-capacity-intelligence
-
 ## 15. Business Insight Example
 
-For example, consider an event with:
+Consider an event with:
 
 - Venue capacity: 2,000
 - Registrations: 2,500
@@ -240,3 +286,8 @@ The estimated attendance is 2,250, while the safe planning target is 1,900.
 This indicates a high capacity risk. The organizer should consider limiting registrations to the recommended cap of 2,111.
 
 This example demonstrates how the dashboard can turn event data into practical registration decisions.
+
+---
+
+**GitHub Repository:**  
+https://github.com/jinu5360/event
